@@ -2,15 +2,15 @@ using UnityEngine;
 
 public class ChinchillaController : MonoBehaviour
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    [SerializeField] Vector3 initialPosition;
+    
     void Start()
     {
-        
+        InitPosition(initialPosition);
     }
 
-    // Update is called once per frame
-    void Update()
+    void InitPosition(Vector3 pos)
     {
-        
+        transform.position = pos;
     }
 }
