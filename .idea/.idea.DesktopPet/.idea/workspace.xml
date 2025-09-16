@@ -6,8 +6,6 @@
   <component name="ChangeListManager">
     <list default="true" id="6c648b6e-3cab-4ada-aba2-3cc9c6398a7c" name="변경" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/.idea.DesktopPet/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.DesktopPet/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scenes/GameScene.unity" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Assets/Scripts/Chinchilla/ChinchillaAI.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Chinchilla/ChinchillaAI.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Chinchilla/ChinchillaStates/IdleState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Chinchilla/ChinchillaStates/IdleState.cs" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/Assets/Scripts/Chinchilla/ChinchillaStates/WanderState.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Assets/Scripts/Chinchilla/ChinchillaStates/WanderState.cs" afterDir="false" />
     </list>
@@ -126,7 +124,7 @@
       <updated>1757252985119</updated>
       <workItem from="1757252988017" duration="23000" />
       <workItem from="1757253045660" duration="424000" />
-      <workItem from="1757994188327" duration="12278000" />
+      <workItem from="1757994188327" duration="13353000" />
     </task>
     <servers />
   </component>

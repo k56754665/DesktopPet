@@ -17,7 +17,6 @@ public class IdleState : ChinchillaState
     {
         base.Enter(context);
         Debug.Log("IdleState Enter");
-        context.Ani?.Play("Idle");
         context.Rb.linearVelocity = Vector3.zero;
     }
 

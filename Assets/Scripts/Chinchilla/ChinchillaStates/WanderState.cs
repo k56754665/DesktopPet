@@ -4,8 +4,11 @@ public class WanderState : ChinchillaState
 {
     private static readonly int Speed = Animator.StringToHash("Speed");
     private Vector3 _targetPos;
-    private float _moveSpeed = 1f;
-    private bool _isMoving = false;
+    private float _moveSpeed = 0.5f;
+    private float _targetYaw;
+    private float _turnSpeed = 180f;
+    private bool _isMoving;
+    private bool _isRotating;
     
     public WanderState()
     {
@@ -22,7 +25,6 @@ public class WanderState : ChinchillaState
     {
         base.Enter(context);
         Debug.Log("WanderState Enter");
-        context.Ani?.SetFloat(Speed, _moveSpeed);
 
         MonitorBounds bounds = context.Bounds;
 
@@ -31,10 +33,10 @@ public class WanderState : ChinchillaState
         _targetPos = new Vector3(randX, context.Rb.transform.position.y, context.Rb.transform.position.z);
 
         // 방향 설정 (왼쪽/오른쪽)
-        if (randX < context.Rb.transform.position.x)
-            context.Rb.transform.rotation = Quaternion.Euler(0, 90f, 0); // 왼쪽
-        else
-            context.Rb.transform.rotation = Quaternion.Euler(0, 270f, 0);   // 오른쪽
+        _targetYaw = randX < context.Rb.transform.position.x ? 90f : 270f;
+        _isRotating = true;
+        context.Rb.linearVelocity = Vector3.zero;
+        context.Ani?.SetFloat(Speed, _moveSpeed);
 
         _isMoving = true;
     }
@@ -42,6 +44,25 @@ public class WanderState : ChinchillaState
     public override void Update(StateContext context)
     {
         if (!_isMoving) return;
+
+        Transform rbTransform = context.Rb.transform;
+
+        if (_isRotating)
+        {
+            Quaternion targetRotation = Quaternion.Euler(0f, _targetYaw, 0f);
+            rbTransform.rotation = Quaternion.RotateTowards(rbTransform.rotation, targetRotation, _turnSpeed * Time.deltaTime);
+
+            if (Quaternion.Angle(rbTransform.rotation, targetRotation) <= 0.1f)
+            {
+                rbTransform.rotation = targetRotation;
+                _isRotating = false;
+            }
+            else
+            {
+                context.Rb.linearVelocity = new Vector3(0f, context.Rb.linearVelocity.y, 0f);
+                return;
+            }
+        }
 
         Vector3 currentPos = context.Rb.position;
         float distance = Mathf.Abs(_targetPos.x - currentPos.x);
@@ -56,6 +77,7 @@ public class WanderState : ChinchillaState
         {
             // 목적지 도착
             context.Rb.linearVelocity = Vector3.zero;
+            context.Ani?.SetFloat(Speed, 0f);
             _isMoving = false;
         }
     }
@@ -65,5 +87,6 @@ public class WanderState : ChinchillaState
         context.Rb.linearVelocity = Vector3.zero;
         context.Ani?.SetFloat(Speed, 0f);
         _isMoving = false;
+        _isRotating = false;
     }
 }
