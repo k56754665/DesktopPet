@@ -2,8 +2,9 @@ using UnityEngine;
 
 public class WanderState : ChinchillaState
 {
+    private static readonly int Speed = Animator.StringToHash("Speed");
     private Vector3 _targetPos;
-    private float _moveSpeed = 2f;
+    private float _moveSpeed = 1f;
     private bool _isMoving = false;
     
     public WanderState()
@@ -14,14 +15,14 @@ public class WanderState : ChinchillaState
     
     public override float EvaluteScore(StateContext context)
     {
-        return _isMoving ? 0.9f : Random.Range(0.1f, 0.5f);
+        return _isMoving ? 2f : Random.Range(0.1f, 0.5f);
     }
 
     public override void Enter(StateContext context)
     {
         base.Enter(context);
         Debug.Log("WanderState Enter");
-        context.Ani.Play("Walk");
+        context.Ani?.SetFloat(Speed, _moveSpeed);
 
         MonitorBounds bounds = context.Bounds;
 
@@ -31,9 +32,9 @@ public class WanderState : ChinchillaState
 
         // 방향 설정 (왼쪽/오른쪽)
         if (randX < context.Rb.transform.position.x)
-            context.Rb.transform.rotation = Quaternion.Euler(0, 270f, 0); // 왼쪽
+            context.Rb.transform.rotation = Quaternion.Euler(0, 90f, 0); // 왼쪽
         else
-            context.Rb.transform.rotation = Quaternion.Euler(0, 90f, 0);   // 오른쪽
+            context.Rb.transform.rotation = Quaternion.Euler(0, 270f, 0);   // 오른쪽
 
         _isMoving = true;
     }
@@ -62,6 +63,7 @@ public class WanderState : ChinchillaState
     public override void Exit(StateContext context)
     {
         context.Rb.linearVelocity = Vector3.zero;
+        context.Ani?.SetFloat(Speed, 0f);
         _isMoving = false;
     }
 }

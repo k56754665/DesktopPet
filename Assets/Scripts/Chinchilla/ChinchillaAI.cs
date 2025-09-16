@@ -19,7 +19,7 @@ public class ChinchillaAI : MonoBehaviour
         {
             Ani = _ani,
             Rb = _rb,
-            Bounds = new MonitorBounds(),
+            Bounds = MonitorUtil.GetBounds(Camera.main),
             Hunger = 0,
             Tiredness = 0,
             Sleepy = 0,
