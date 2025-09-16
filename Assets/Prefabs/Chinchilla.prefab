@@ -14,7 +14,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0.5
+      value: 0.513
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
       propertyPath: m_LocalPosition.z
@@ -52,6 +52,26 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chinchilla
       objectReference: {fileID: 0}
+    - target: {fileID: 4167280743394806330, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4167280743394806330, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4167280743394806330, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 4167280743394806330, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 4167280743394806330, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
     - target: {fileID: 5866666021909216657, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
       propertyPath: m_Controller
       value: 
@@ -68,6 +88,26 @@ PrefabInstance:
       propertyPath: m_ApplyRootMotion
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 8879528566716807029, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879528566716807029, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879528566716807029, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879528566716807029, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 8879528566716807029, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 180
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 5866666021909216657, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
     m_RemovedGameObjects: []
@@ -81,7 +121,7 @@ PrefabInstance:
       addedObject: {fileID: 1411318862222346529}
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
       insertIndex: -1
-      addedObject: {fileID: 6400997347227849635}
+      addedObject: {fileID: 6983920109627369757}
     - targetCorrespondingSourceObject: {fileID: 7036213049465896255, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
       insertIndex: -1
       addedObject: {fileID: 966571476256139293}
@@ -168,7 +208,7 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 80
   m_CollisionDetection: 0
---- !u!114 &6400997347227849635
+--- !u!114 &6983920109627369757
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -177,7 +217,6 @@ MonoBehaviour:
   m_GameObject: {fileID: 8591723914825115265}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: b82b44665f97e604e86d95c344921b93, type: 3}
+  m_Script: {fileID: 11500000, guid: 814311a057369844b959fdae4139ccf3, type: 3}
   m_Name: 
-  m_EditorClassIdentifier: Assembly-CSharp::ChinchillaController
-  initialPosition: {x: 0, y: 0.5, z: 0}
+  m_EditorClassIdentifier: Assembly-CSharp::ChinchillaAI
