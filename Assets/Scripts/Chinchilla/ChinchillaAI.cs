@@ -22,6 +22,7 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
             Ani = _ani,
             Rb = _rb,
             Bounds = MonitorUtil.GetBounds(Camera.main),
+            Motion = new RocoMotion(_rb, _ani),
             Hunger = 0,
             Tiredness = 0,
             Sleepy = 0,
