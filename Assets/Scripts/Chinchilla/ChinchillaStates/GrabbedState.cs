@@ -25,7 +25,9 @@ public class GrabbedState : ChinchillaState
 
     public override void Enter(StateContext context)
     {
+        Debug.Log("Enter Grabbed State");
         base.Enter(context);
+        context.Rb.useGravity = false;
         _hasPointer = false;
     }
 
@@ -50,6 +52,7 @@ public class GrabbedState : ChinchillaState
 
     public override void Exit(StateContext context)
     {
+        context.Rb.useGravity = true;
         _isGrabbing = false;
         _hasPointer = false;
         _dragDistance = _defaultDistance;

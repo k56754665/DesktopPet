@@ -33,6 +33,7 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
             new IdleState(),
             new WanderState(),
             new GrabbedState(),
+            new FallingState(),
         };
 
         _grabbedState = _states.OfType<GrabbedState>().FirstOrDefault();
@@ -92,5 +93,6 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
         _grabbedState.UpdatePointer(pointerInfo);
         _grabbedState.SetGrabbing(false);
         _isBeingDragged = false;
+        ChangeState(new FallingState());
     }
 }
