@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class FallingState : ChinchillaState
+public class FallingState : ForcedState
 {
     private const float GroundCheckDelay = 0.05f;
     private const float GroundCheckPadding = 0.05f;
@@ -8,11 +8,6 @@ public class FallingState : ChinchillaState
 
     private Collider _collider;
     private bool _isFalling;
-
-    public override float EvaluateScore(StateContext context)
-    {
-        return _isFalling ? float.MaxValue : 0f;
-    }
 
     public override void Enter(StateContext context)
     {

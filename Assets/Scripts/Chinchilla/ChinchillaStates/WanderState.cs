@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class WanderState : ChinchillaState
+public class WanderState : EvaluatableState
 {
     private Vector3 _targetPos;
     private float _targetYaw;

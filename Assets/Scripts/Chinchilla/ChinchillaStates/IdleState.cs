@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class IdleState : ChinchillaState
+public class IdleState : EvaluatableState
 {
     public IdleState()
     {

@@ -597,9 +597,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 53e6190e97f20e34d9b48e288bccaa46, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::InputManager
-  _chinchillaLayer:
+  _interactionLayer:
     serializedVersion: 2
-    m_Bits: 64
+    m_Bits: 4294967295
+  _rayDistance: 200
 --- !u!1 &832575517
 GameObject:
   m_ObjectHideFlags: 0

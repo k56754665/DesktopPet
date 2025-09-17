@@ -1,9 +1,11 @@
 using UnityEngine;
 
-public class GrabbedState : ChinchillaState
+public class GrabbedState : ForcedState
 {
+    private static readonly int Grabbed = Animator.StringToHash("Grabbed");
     private readonly float _defaultDistance = 5f;
     private readonly float _followSpeed = 10f;
+    private StateContext _context;
 
     private bool _isGrabbing;
     private bool _hasPointer;
@@ -12,23 +14,19 @@ public class GrabbedState : ChinchillaState
 
     public GrabbedState()
     {
-        minDuration = Mathf.Infinity;
         _dragDistance = _defaultDistance;
     }
 
     public float DefaultDistance => _defaultDistance;
 
-    public override float EvaluateScore(StateContext context)
-    {
-        return _isGrabbing ? Mathf.Infinity : 0f;
-    }
-
     public override void Enter(StateContext context)
     {
         Debug.Log("Enter Grabbed State");
         base.Enter(context);
+        context.Ani.SetBool(Grabbed, _isGrabbing);
         context.Rb.useGravity = false;
         _hasPointer = false;
+        _context = context;
     }
 
     public override void Update(StateContext context)
@@ -36,16 +34,7 @@ public class GrabbedState : ChinchillaState
         if (!_hasPointer)
             return;
 
-        Vector3 targetPosition;
-
-        if (_pointerInfo.HasHit)
-        {
-            targetPosition = _pointerInfo.Hit.point;
-        }
-        else
-        {
-            targetPosition = _pointerInfo.GetWorldPoint(_dragDistance);
-        }
+        Vector3 targetPosition = _pointerInfo.HasHit ? _pointerInfo.Hit.point : _pointerInfo.GetWorldPoint(_dragDistance);
 
         context.Rb.MovePosition(Vector3.Lerp(context.Rb.position, targetPosition, Time.deltaTime * _followSpeed));
     }
@@ -54,16 +43,26 @@ public class GrabbedState : ChinchillaState
     {
         context.Rb.useGravity = true;
         _isGrabbing = false;
+        context.Ani.SetBool(Grabbed, _isGrabbing);
         _hasPointer = false;
         _dragDistance = _defaultDistance;
+        _context = null;
     }
 
     public void SetGrabbing(bool isGrabbing)
     {
+        if (_isGrabbing == isGrabbing)
+            return;
+
         _isGrabbing = isGrabbing;
-        if (!isGrabbing)
+
+        if (isGrabbing) return;
+        
+        _hasPointer = false;
+        if (_context != null)
         {
-            _hasPointer = false;
+            var fallingState = ChinchillaStateFactory.Get<FallingState>();
+            _context.RequestStateChange?.Invoke(fallingState);
         }
     }
 

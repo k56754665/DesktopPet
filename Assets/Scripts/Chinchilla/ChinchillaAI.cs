@@ -1,12 +1,11 @@
 using System.Collections.Generic;
-using System.Linq;
 using UnityEngine;
 
 public class ChinchillaAI : MonoBehaviour, IDraggable
 {
     private StateContext _context;
     private ChinchillaState _currentState;
-    private List<ChinchillaState> _states;
+    private List<EvaluatableState> _states;
     private Animator _ani;
     private Rigidbody _rb;
     private bool _isBeingDragged;
@@ -28,7 +27,7 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
             Sleepy = 0,
         };
         
-        _states = new List<ChinchillaState>
+        _states = new List<EvaluatableState>
         {
             ChinchillaStateFactory.Get<IdleState>(),
             ChinchillaStateFactory.Get<WanderState>(),
@@ -42,14 +41,45 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
 
     private void UpdateStates()
     {
-        ChinchillaState best = _states.OrderByDescending(a => a.EvaluateScore(_context)).First();
-        ChangeState(best);
+        if (_currentState is ForcedState)
+        {
+            _currentState.Update(_context);
+            return;
+        }
+
+        EvaluatableState best = null;
+        float bestScore = float.MinValue;
+
+        foreach (var state in _states)
+        {
+            if (state == null)
+                continue;
+
+            float score = state.EvaluateScore(_context);
+            if (score > bestScore)
+            {
+                bestScore = score;
+                best = state;
+            }
+        }
+
+        if (best != null)
+        {
+            ChangeState(best);
+        }
+
         _currentState?.Update(_context);
     }
 
     public void ChangeState(ChinchillaState state)
     {
-        if (state == _currentState || (_currentState != null && !_currentState.CanExit())) return;
+        if (state == null || state == _currentState)
+            return;
+
+        bool isTargetForced = state is ForcedState;
+
+        if (!isTargetForced && _currentState != null && !_currentState.CanExit())
+            return;
 
         _currentState?.Exit(_context);
         _currentState = state;
@@ -58,18 +88,18 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
 
     public void OnDragStart(PointerInfo pointerInfo)
     {
-        var grabbstate = ChinchillaStateFactory.Get<GrabbedState>();
+        var grabState = ChinchillaStateFactory.Get<GrabbedState>();
 
         _isBeingDragged = true;
 
         float dragDistance = pointerInfo.HasHit && !float.IsInfinity(pointerInfo.HitDistance)
             ? pointerInfo.HitDistance
-            : grabbstate.DefaultDistance;
+            : grabState.DefaultDistance;
 
-        grabbstate.SetDragDistance(dragDistance);
-        grabbstate.SetGrabbing(true);
-        ChangeState(grabbstate);
-        grabbstate.UpdatePointer(pointerInfo);
+        grabState.SetDragDistance(dragDistance);
+        grabState.SetGrabbing(true);
+        ChangeState(grabState);
+        grabState.UpdatePointer(pointerInfo);
     }
 
     public void OnDrag(PointerInfo pointerInfo)
@@ -91,6 +121,5 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
         grabbedState.UpdatePointer(pointerInfo);
         grabbedState.SetGrabbing(false);
         _isBeingDragged = false;
-        ChangeState(ChinchillaStateFactory.Get<FallingState>());
     }
 }
