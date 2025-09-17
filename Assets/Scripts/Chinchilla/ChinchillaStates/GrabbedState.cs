@@ -5,7 +5,6 @@ public class GrabbedState : ForcedState
     private static readonly int Grabbed = Animator.StringToHash("Grabbed");
     private readonly float _defaultDistance = 5f;
     private readonly float _followSpeed = 10f;
-    private StateContext _context;
 
     private bool _isGrabbing;
     private bool _hasPointer;
@@ -23,20 +22,33 @@ public class GrabbedState : ForcedState
     {
         Debug.Log("Enter Grabbed State");
         base.Enter(context);
-        context.Ani.SetBool(Grabbed, _isGrabbing);
+        context.Ani.SetBool(Grabbed, true);
         context.Rb.useGravity = false;
         _hasPointer = false;
-        _context = context;
     }
 
     public override void Update(StateContext context)
     {
+        if (!_isGrabbing) 
+        {
+            // 놓였으면 Falling으로 전환
+            var fallingState = ChinchillaStateFactory.Get<FallingState>();
+            context.RequestStateChange?.Invoke(fallingState);
+            return;
+        }
+
         if (!_hasPointer)
             return;
 
-        Vector3 targetPosition = _pointerInfo.HasHit ? _pointerInfo.Hit.point : _pointerInfo.GetWorldPoint(_dragDistance);
+        Vector3 targetPosition = _pointerInfo.HasHit 
+            ? _pointerInfo.Hit.point 
+            : _pointerInfo.GetWorldPoint(_dragDistance);
 
-        context.Rb.MovePosition(Vector3.Lerp(context.Rb.position, targetPosition, Time.deltaTime * _followSpeed));
+        // GrabPoint 보정
+        Vector3 offset = context.GrabPoint.position - context.Rb.position;
+        Vector3 correctedTarget = targetPosition - offset;
+
+        context.Rb.MovePosition(Vector3.Lerp(context.Rb.position, correctedTarget, Time.deltaTime * _followSpeed));
     }
 
     public override void Exit(StateContext context)
@@ -46,7 +58,6 @@ public class GrabbedState : ForcedState
         context.Ani.SetBool(Grabbed, _isGrabbing);
         _hasPointer = false;
         _dragDistance = _defaultDistance;
-        _context = null;
     }
 
     public void SetGrabbing(bool isGrabbing)
@@ -56,14 +67,8 @@ public class GrabbedState : ForcedState
 
         _isGrabbing = isGrabbing;
 
-        if (isGrabbing) return;
-        
-        _hasPointer = false;
-        if (_context != null)
-        {
-            var fallingState = ChinchillaStateFactory.Get<FallingState>();
-            _context.RequestStateChange?.Invoke(fallingState);
-        }
+        if (!isGrabbing)
+            _hasPointer = false;
     }
 
     public void UpdatePointer(PointerInfo pointerInfo)

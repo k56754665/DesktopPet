@@ -3,6 +3,7 @@ using UnityEngine;
 
 public class ChinchillaAI : MonoBehaviour, IDraggable
 {
+    [SerializeField] Transform _grabPoint;
     private StateContext _context;
     private ChinchillaState _currentState;
     private List<EvaluatableState> _states;
@@ -22,6 +23,7 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
             Bounds = MonitorUtil.GetBounds(Camera.main),
             Motion = new RocoMotion(_rb, _ani),
             RequestStateChange = ChangeState,
+            GrabPoint = _grabPoint,
             Hunger = 0,
             Tiredness = 0,
             Sleepy = 0,

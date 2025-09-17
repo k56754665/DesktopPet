@@ -1,5 +1,36 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
+--- !u!1 &8971911255242131240
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4335027248662802669}
+  m_Layer: 6
+  m_Name: GrabPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4335027248662802669
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8971911255242131240}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0.513, z: 0.158}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8966737010845908027}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &8933600904728026064
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -115,7 +146,10 @@ PrefabInstance:
     m_RemovedComponents:
     - {fileID: 5866666021909216657, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 4335027248662802669}
     m_AddedComponents:
     - targetCorrespondingSourceObject: {fileID: 919132149155446097, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
       insertIndex: -1
@@ -224,3 +258,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814311a057369844b959fdae4139ccf3, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::ChinchillaAI
+  _grabPoint: {fileID: 4335027248662802669}
+--- !u!4 &8966737010845908027 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: -8679921383154817045, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+  m_PrefabInstance: {fileID: 8933600904728026064}
+  m_PrefabAsset: {fileID: 0}

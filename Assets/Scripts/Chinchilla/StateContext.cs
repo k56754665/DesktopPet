@@ -8,6 +8,7 @@ public class StateContext
     public MonitorBounds Bounds;
     public RocoMotion Motion;
     public Action<ChinchillaState> RequestStateChange;
+    public Transform GrabPoint;
     public float Hunger;
     public float Tiredness;
     public float Sleepy;
