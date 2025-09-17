@@ -109,6 +109,6 @@ public class FallingState : ChinchillaState
             context.Rb.MovePosition(targetPos);
         }
 
-        context.RequestStateChange?.Invoke(new IdleState());
+        context.RequestStateChange?.Invoke(ChinchillaStateFactory.Get<IdleState>());
     }
 }

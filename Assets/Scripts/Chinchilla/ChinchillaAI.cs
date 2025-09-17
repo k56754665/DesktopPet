@@ -9,7 +9,6 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
     private List<ChinchillaState> _states;
     private Animator _ani;
     private Rigidbody _rb;
-    private GrabbedState _grabbedState;
     private bool _isBeingDragged;
     
     private void Start()
@@ -31,13 +30,9 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
         
         _states = new List<ChinchillaState>
         {
-            new IdleState(),
-            new WanderState(),
-            new GrabbedState(),
-            new FallingState(),
+            ChinchillaStateFactory.Get<IdleState>(),
+            ChinchillaStateFactory.Get<WanderState>(),
         };
-
-        _grabbedState = _states.OfType<GrabbedState>().FirstOrDefault();
     }
 
     private void Update()
@@ -63,38 +58,39 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
 
     public void OnDragStart(PointerInfo pointerInfo)
     {
-        if (_grabbedState == null)
-            return;
+        var grabbstate = ChinchillaStateFactory.Get<GrabbedState>();
 
         _isBeingDragged = true;
 
         float dragDistance = pointerInfo.HasHit && !float.IsInfinity(pointerInfo.HitDistance)
             ? pointerInfo.HitDistance
-            : _grabbedState.DefaultDistance;
+            : grabbstate.DefaultDistance;
 
-        _grabbedState.SetDragDistance(dragDistance);
-        _grabbedState.SetGrabbing(true);
-        ChangeState(_grabbedState);
-        _grabbedState.UpdatePointer(pointerInfo);
+        grabbstate.SetDragDistance(dragDistance);
+        grabbstate.SetGrabbing(true);
+        ChangeState(grabbstate);
+        grabbstate.UpdatePointer(pointerInfo);
     }
 
     public void OnDrag(PointerInfo pointerInfo)
     {
-        if (!_isBeingDragged || _grabbedState == null)
+        if (!_isBeingDragged)
             return;
 
-        _grabbedState.UpdatePointer(pointerInfo);
+        ChinchillaStateFactory.Get<GrabbedState>().UpdatePointer(pointerInfo);
     }
 
     public void OnDragEnd(PointerInfo pointerInfo)
     {
-        if (!_isBeingDragged || _grabbedState == null)
+        if (!_isBeingDragged)
             return;
+        
+        var grabbedState = ChinchillaStateFactory.Get<GrabbedState>();
 
         Debug.Log("OnDragEnd");
-        _grabbedState.UpdatePointer(pointerInfo);
-        _grabbedState.SetGrabbing(false);
+        grabbedState.UpdatePointer(pointerInfo);
+        grabbedState.SetGrabbing(false);
         _isBeingDragged = false;
-        ChangeState(new FallingState());
+        ChangeState(ChinchillaStateFactory.Get<FallingState>());
     }
 }
