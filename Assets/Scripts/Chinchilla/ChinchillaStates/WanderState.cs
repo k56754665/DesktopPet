@@ -18,11 +18,10 @@ public class WanderState : ChinchillaState
 
     public WanderState()
     {
-        isInterruptible = true;
         minDuration = 2f;
     }
 
-    public override float EvaluteScore(StateContext context)
+    public override float EvaluateScore(StateContext context)
     {
         return _isMoving ? 2f : Random.Range(0.1f, 0.5f);
     }

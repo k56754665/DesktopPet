@@ -29,23 +29,28 @@ public class ChinchillaAI : MonoBehaviour
         {
             new IdleState(),
             new WanderState(),
+            new GrabbedState(),
         };
     }
 
     private void Update()
     {
-        // 점수 평가
-        ChinchillaState best = _states.OrderByDescending(a => a.EvaluteScore(_context)).First();
-        
-        // 상태 전환 조건 확인
-        if (best != _currentState && (_currentState == null || _currentState.CanExit()))
-        {
-            _currentState?.Exit(_context);
-            _currentState = best;
-            _currentState?.Enter(_context);
-        }
-        
-        // 현재 상태 실행
+        UpdateStates();
+    }
+
+    private void UpdateStates()
+    {
+        ChinchillaState best = _states.OrderByDescending(a => a.EvaluateScore(_context)).First();
+        ChangeState(best);
         _currentState?.Update(_context);
+    }
+
+    public void ChangeState(ChinchillaState state)
+    {
+        if (state == _currentState || (_currentState != null && !_currentState.CanExit())) return;
+        
+        _currentState?.Exit(_context);
+        _currentState = state;
+        _currentState?.Enter(_context);
     }
 }

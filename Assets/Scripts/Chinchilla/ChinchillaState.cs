@@ -2,11 +2,10 @@ using UnityEngine;
 
 public abstract class ChinchillaState
 {
-    protected bool isInterruptible = true;
     protected float minDuration = 0f;
     protected float enterTime;
     
-    public abstract float EvaluteScore(StateContext context);
+    public abstract float EvaluateScore(StateContext context);
 
     public virtual void Enter(StateContext context) { enterTime = Time.time; }
     public virtual void Update(StateContext context) { }

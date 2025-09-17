@@ -52,6 +52,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: Chinchilla
       objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
+      propertyPath: m_Layer
+      value: 6
+      objectReference: {fileID: 0}
     - target: {fileID: 4167280743394806330, guid: 4d41ce740e5f3484094ea23a7d9e2843, type: 3}
       propertyPath: m_LocalRotation.w
       value: 0

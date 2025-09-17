@@ -4,11 +4,10 @@ public class IdleState : ChinchillaState
 {
     public IdleState()
     {
-        isInterruptible = true;
         minDuration = 2f;
     }
     
-    public override float EvaluteScore(StateContext context)
+    public override float EvaluateScore(StateContext context)
     {
         return Random.value;
     }
