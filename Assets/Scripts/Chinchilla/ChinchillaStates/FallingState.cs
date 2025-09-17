@@ -4,7 +4,7 @@ public class FallingState : ForcedState
 {
     private const float GroundCheckDelay = 0.05f;
     private const float GroundCheckPadding = 0.05f;
-    private const float LandingVelocityThreshold = 0.1f;
+    private const float LandingVelocityThreshold = 0.5f; // 착지 인정할 y속도 임계치
 
     private Collider _collider;
     private bool _isFalling;
@@ -18,7 +18,6 @@ public class FallingState : ForcedState
         _isFalling = true;
         
         context.Motion?.StopHorizontal();
-        context.Rb.linearVelocity = Vector3.zero;
     }
 
     public override void Update(StateContext context)
@@ -29,12 +28,12 @@ public class FallingState : ForcedState
         if (Time.time - enterTime < GroundCheckDelay)
             return;
 
-        if (Mathf.Abs(context.Rb.linearVelocity.y) > LandingVelocityThreshold)
+        if (context.Rb.linearVelocity.y < -LandingVelocityThreshold)
             return;
 
-        if (TryGetGroundPoint(context, out Vector3 groundPoint))
+        if (CheckGround(context))
         {
-            Land(context, groundPoint);
+            Land(context);
         }
     }
 
@@ -43,67 +42,49 @@ public class FallingState : ForcedState
         _isFalling = false;
     }
 
-    private bool TryGetGroundPoint(StateContext context, out Vector3 groundPoint)
+    private bool CheckGround(StateContext context)
     {
-        float castDistance = GroundCheckPadding;
-
-        if (_collider != null)
-        {
-            castDistance += _collider.bounds.extents.y;
-        }
+        float castDistance = GroundCheckPadding + (_collider != null ? _collider.bounds.extents.y : 0f);
 
         Vector3 origin = context.Rb.position + Vector3.up * GroundCheckPadding;
-        RaycastHit[] hits = Physics.RaycastAll(
-            origin,
-            Vector3.down,
-            castDistance,
-            Physics.DefaultRaycastLayers,
-            QueryTriggerInteraction.Ignore);
 
-        foreach (RaycastHit hit in hits)
+        // Ground 전용 레이어만 감지 (필요시 레이어마스크 교체)
+        int groundMask = LayerMask.GetMask("Ground");
+        if (groundMask == 0) groundMask = Physics.DefaultRaycastLayers;
+
+        if (Physics.Raycast(origin, Vector3.down, out RaycastHit hit, castDistance, groundMask, QueryTriggerInteraction.Ignore))
         {
-            if (hit.rigidbody == context.Rb)
-                continue;
-
-            groundPoint = hit.point;
-            return true;
+            if (hit.rigidbody != context.Rb)
+            {
+                return true;
+            }
         }
 
+        // Bounds 보조 체크
         float bottom = context.Bounds.Bottom;
         if (context.Rb.position.y <= bottom + GroundCheckPadding)
         {
-            groundPoint = new Vector3(context.Rb.position.x, bottom, context.Rb.position.z);
             return true;
         }
 
-        groundPoint = Vector3.zero;
         return false;
     }
 
-    private void Land(StateContext context, Vector3 groundPoint)
+    private void Land(StateContext context)
     {
         if (!_isFalling)
             return;
 
         _isFalling = false;
-        context.Rb.linearVelocity = Vector3.zero;
 
-        if (groundPoint != Vector3.zero)
+        // 위로 튀는 속도만 제거
+        if (context.Rb.linearVelocity.y > 0f)
         {
-            Vector3 targetPos = context.Rb.position;
-
-            if (_collider != null)
-            {
-                targetPos.y = groundPoint.y + _collider.bounds.extents.y;
-            }
-            else
-            {
-                targetPos.y = groundPoint.y;
-            }
-
-            context.Rb.MovePosition(targetPos);
+            Vector3 vel = context.Rb.linearVelocity;
+            vel.y = 0f;
+            context.Rb.linearVelocity = vel;
         }
-
+        
         context.RequestStateChange?.Invoke(ChinchillaStateFactory.Get<IdleState>());
     }
 }
