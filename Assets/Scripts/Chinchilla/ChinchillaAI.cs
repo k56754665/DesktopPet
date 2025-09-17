@@ -23,6 +23,7 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
             Rb = _rb,
             Bounds = MonitorUtil.GetBounds(Camera.main),
             Motion = new RocoMotion(_rb, _ani),
+            RequestStateChange = ChangeState,
             Hunger = 0,
             Tiredness = 0,
             Sleepy = 0,
@@ -90,6 +91,7 @@ public class ChinchillaAI : MonoBehaviour, IDraggable
         if (!_isBeingDragged || _grabbedState == null)
             return;
 
+        Debug.Log("OnDragEnd");
         _grabbedState.UpdatePointer(pointerInfo);
         _grabbedState.SetGrabbing(false);
         _isBeingDragged = false;
