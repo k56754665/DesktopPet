@@ -4,18 +4,24 @@ public class WanderState : ChinchillaState
 {
     private static readonly int Speed = Animator.StringToHash("Speed");
     private Vector3 _targetPos;
-    private float _moveSpeed = 0.5f;
+    private float _currentSpeed;
     private float _targetYaw;
     private float _turnSpeed = 180f;
     private bool _isMoving;
     private bool _isRotating;
-    
+
+    private const float WalkSpeed = 0.3f;
+    private const float RunSpeed = 0.5f;
+    private const float MinModeDuration = 1.5f;
+    private const float MaxModeDuration = 3.5f;
+    private float _nextSpeedSwitchTime;
+
     public WanderState()
     {
         isInterruptible = true;
         minDuration = 2f;
     }
-    
+
     public override float EvaluteScore(StateContext context)
     {
         return _isMoving ? 2f : Random.Range(0.1f, 0.5f);
@@ -27,59 +33,25 @@ public class WanderState : ChinchillaState
         Debug.Log("WanderState Enter");
 
         MonitorBounds bounds = context.Bounds;
-
-        // X축 랜덤 목적지 (y,z는 현 위치 유지)
         float randX = Random.Range(bounds.Left, bounds.Right);
-        _targetPos = new Vector3(randX, context.Rb.transform.position.y, context.Rb.transform.position.z);
+        _targetPos = new Vector3(randX, context.Rb.position.y, context.Rb.position.z);
 
-        // 방향 설정 (왼쪽/오른쪽)
-        _targetYaw = randX < context.Rb.transform.position.x ? 90f : 270f;
+        _targetYaw = randX < context.Rb.position.x ? 90f : 270f;
         _isRotating = true;
-        context.Rb.linearVelocity = Vector3.zero;
-        context.Ani?.SetFloat(Speed, _moveSpeed);
-
         _isMoving = true;
+
+        context.Rb.linearVelocity = Vector3.zero;
+        ChooseNextSpeed(context);
     }
 
     public override void Update(StateContext context)
     {
         if (!_isMoving) return;
-
-        Transform rbTransform = context.Rb.transform;
-
         if (_isRotating)
         {
-            Quaternion targetRotation = Quaternion.Euler(0f, _targetYaw, 0f);
-            rbTransform.rotation = Quaternion.RotateTowards(rbTransform.rotation, targetRotation, _turnSpeed * Time.deltaTime);
-
-            if (Quaternion.Angle(rbTransform.rotation, targetRotation) <= 0.1f)
-            {
-                rbTransform.rotation = targetRotation;
-                _isRotating = false;
-            }
-            else
-            {
-                context.Rb.linearVelocity = new Vector3(0f, context.Rb.linearVelocity.y, 0f);
-                return;
-            }
+            if (Rotate(context)) return;
         }
-
-        Vector3 currentPos = context.Rb.position;
-        float distance = Mathf.Abs(_targetPos.x - currentPos.x);
-
-        if (distance > 0.05f)
-        {
-            // X축으로만 이동
-            float dir = Mathf.Sign(_targetPos.x - currentPos.x);
-            context.Rb.linearVelocity = new Vector3(dir * _moveSpeed, context.Rb.linearVelocity.y, 0f);
-        }
-        else
-        {
-            // 목적지 도착
-            context.Rb.linearVelocity = Vector3.zero;
-            context.Ani?.SetFloat(Speed, 0f);
-            _isMoving = false;
-        }
+        Move(context);
     }
 
     public override void Exit(StateContext context)
@@ -88,5 +60,61 @@ public class WanderState : ChinchillaState
         context.Ani?.SetFloat(Speed, 0f);
         _isMoving = false;
         _isRotating = false;
+        _currentSpeed = 0f;
+    }
+
+    private bool Rotate(StateContext context)
+    {
+        // 회전 중일 때는 항상 WalkSpeed 적용
+        context.Ani?.SetFloat(Speed, WalkSpeed);
+
+        Transform rbTransform = context.Rb.transform;
+        Quaternion targetRot = Quaternion.Euler(0f, _targetYaw, 0f);
+
+        rbTransform.rotation = Quaternion.RotateTowards(
+            rbTransform.rotation, targetRot, _turnSpeed * Time.deltaTime);
+
+        if (Quaternion.Angle(rbTransform.rotation, targetRot) > 0.01f)
+        {
+            context.Rb.linearVelocity = new Vector3(0f, context.Rb.linearVelocity.y, 0f);
+            return true; // 아직 회전 중
+        }
+
+        rbTransform.rotation = targetRot;
+        _isRotating = false;
+        return false;
+    }
+
+    private void Move(StateContext context)
+    {
+        float distance = Mathf.Abs(_targetPos.x - context.Rb.position.x);
+        if (distance > 0.05f) MoveTowardsTarget(context);
+        else Arrive(context);
+    }
+
+    private void MoveTowardsTarget(StateContext context)
+    {
+        if (Time.time >= _nextSpeedSwitchTime)
+            ChooseNextSpeed(context);
+
+        float dir = Mathf.Sign(_targetPos.x - context.Rb.position.x);
+        Vector3 vel = context.Rb.linearVelocity;
+        context.Rb.linearVelocity = new Vector3(dir * _currentSpeed, vel.y, 0f);
+    }
+
+    private void Arrive(StateContext context)
+    {
+        Vector3 vel = context.Rb.linearVelocity;
+        context.Rb.linearVelocity = new Vector3(0f, vel.y, 0f);
+        context.Ani?.SetFloat(Speed, 0f);
+        _isMoving = false;
+        _currentSpeed = 0f;
+    }
+
+    private void ChooseNextSpeed(StateContext context)
+    {
+        _currentSpeed = Random.value < 0.4f ? RunSpeed : WalkSpeed;
+        context.Ani?.SetFloat(Speed, _currentSpeed);
+        _nextSpeedSwitchTime = Time.time + Random.Range(MinModeDuration, MaxModeDuration);
     }
 }
